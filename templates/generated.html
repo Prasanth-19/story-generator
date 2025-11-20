@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generated Story</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+
+  <style>
+    .continue-btn {
+      background-color: #43a047;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .continue-btn:hover {
+      background-color: #388e3c;
+    }
+
+    #loading-gif {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #loading-gif img {
+      width: 180px;
+      height: auto;
+    }
+
+    .length-info {
+      margin-top: 10px;
+      font-style: italic;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="{{ url_for('static', filename='logo.gif') }}" alt="Logo" class="logo" />
+    <span class="nav-title">AI Story Generator</span>
+  </div>
+  <div class="nav-right">
+    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+    <a href="{{ url_for('history') }}" class="nav-link">History</a>
+  </div>
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div class="mobile-sidebar" id="mobileSidebar">
+  <a href="{{ url_for('index') }}">Home</a>
+  <a href="{{ url_for('history') }}">History</a>
+</div>
+
+<!-- Genre Background Header -->
+<div class="container" style="background-image: url('{{ container_background_url }}');">
+  <h1>{{ genre|capitalize }} Story</h1>
+</div>
+
+<!-- Story Section -->
+<div class="container">
+  <div class="story-entry">
+    <p>{{ story }}</p>
+
+    <!-- Length Info -->
+    <div class="length-info">
+      (Generated with max length: {{ request.form['max_length'] if request.form.get('max_length') else 'default' }})
+    </div>
+
+    <div class="button-group">
+      <button class="listen-btn" onclick="speakStory(`{{ story | escape }}`)">🎧 Listen</button>
+      <button class="stop-btn" onclick="stopSpeech()">⏹ Stop</button>
+
+      <!-- Continue Button Form -->
+      <form action="{{ url_for('continue_story') }}" method="post" style="display:inline;" onsubmit="showLoader()">
+        <input type="hidden" name="story" value="{{ story }}">
+        <input type="hidden" name="genre" value="{{ genre }}">
+        <button type="submit" class="continue-btn" id="continue-btn">➡️ Continue</button>
+      </form>
+
+      <!-- Loading GIF -->
+      <div id="loading-gif">
+        <img src="{{ url_for('static', filename='luffy_running.gif') }}" alt="Loading..." />
+        <p>Continuing your story, please wait...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="link-section">
+    <a href="{{ url_for('index') }}" class="back-link">← Generate Another Story</a>
+    <a href="{{ url_for('history') }}" class="back-link">📜 View History</a>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  function toggleSidebar() {
+    document.getElementById('mobileSidebar').classList.toggle('show');
+  }
+
+  let synth = window.speechSynthesis;
+
+  function speakStory(text) {
+    if (synth.speaking) {
+      synth.cancel();
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 1;
+    synth.speak(utterance);
+  }
+
+  function stopSpeech() {
+    if (synth.speaking) {
+      synth.cancel();
+    }
+  }
+
+  function showLoader() {
+    document.getElementById("continue-btn").style.display = "none";
+    document.getElementById("loading-gif").style.display = "block";
+  }
+</script>
+
+</body>
+</html>

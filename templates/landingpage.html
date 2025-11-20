@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Story Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />  
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center">
+    <img src="{{ url_for('static', filename='logo.gif') }}" alt="Logo" class="w-10 h-10 mr-3 logo" />
+    <h1 class="text-xl md:text-2xl font-bold text-green-700">AI Story Generator</h1>
+  </div>
+</header>
+  <!-- Hero Section -->
+  <section class="relative bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+      <h1 class="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+        Welcome to the Future of Storytelling
+      </h1>
+      <p class="mt-6 text-lg md:text-xl text-gray-600">
+        Create, continue, and listen to amazing stories powered by AI and deep learning.
+      </p>
+      <a href="{{ url_for('index') }}" class="mt-8 inline-block bg-green-600 text-white text-lg font-semibold py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300">
+        Get Started
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 bg-gray-100">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-12">What Can You Do?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold text-green-600 mb-2">Generate Stories</h3>
+          <p class="text-gray-600">Choose a genre and prompt. Let AI weave a story for you instantly.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold text-green-600 mb-2">Continue Your Imagination</h3>
+          <p class="text-gray-600">Continue existing stories with intelligent narrative flow using AI.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold text-green-600 mb-2">Listen & Save</h3>
+          <p class="text-gray-600">Listen with TTS and access all your generated stories anytime via history.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="bg-white py-16">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Powered by Deep Learning</h2>
+      <p class="text-gray-600 text-lg leading-relaxed">
+        This AI Story Generator uses transformer-based models like <strong>GPT-2</strong> and <strong>GPT-Neo</strong> to produce creative, genre-based stories. Whether you're writing fantasy, mystery, or sci-fi, your story begins here.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-green-600 py-12 text-center text-white">
+    <h2 class="text-3xl md:text-4xl font-bold">Start Your Storytelling Journey</h2>
+    <a href="{{ url_for('index') }}" class="mt-6 inline-block bg-white text-green-600 font-semibold py-3 px-6 rounded-full shadow hover:bg-gray-100 transition duration-300">
+      Launch Story Generator
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-400 py-6 text-center text-sm">
+    &copy; 2025 AI Story Generator. Built with creativity, powered by GPT.
+  </footer>
+</body>
+</html>

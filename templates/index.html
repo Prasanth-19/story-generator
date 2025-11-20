@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Story Generator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+
+  <style>
+    button[type="submit"] {
+      background-color: #43a047;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 12px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #388e3c;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      border: 1px solid #ccc;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    #loading-gif {
+      display: none;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    #loading-gif img {
+      width: 180px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="{{ url_for('static', filename='logo.gif') }}" alt="Logo" class="logo" />
+      <span class="nav-title">AI Story Generator</span>
+    </div>
+    <div class="nav-right">
+      <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+      <a href="{{ url_for('history') }}" class="nav-link">History</a>
+    </div>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  </nav>
+
+  <!-- Mobile Sidebar -->
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('history') }}">History</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <h1>Generate a Story</h1>
+    <form method="POST" action="/generate" class="form-card" onsubmit="showGif()">
+      <label for="genre">Genre:</label>
+      <select id="genre" name="genre" required>
+        <option value="">-- Select Genre --</option>
+        <option value="action">Action</option>
+        <option value="horror">Horror</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="sci-fi">Sci-Fi</option>
+        <option value="adventure">adventure</option>
+      </select>
+
+      <label for="prompt">Prompt:</label>
+      <input type="text" id="prompt" name="prompt" placeholder="Enter a prompt..." required />
+
+      <label for="max_length">Max Length:</label>
+      <input type="number" id="max_length" name="max_length" value="100" />
+
+      <label for="num_stories">Number of Stories:</label>
+      <input type="number" name="num_stories" id="num_stories" min="1" value="1" />
+
+      <button type="submit">Generate</button>
+    </form>
+
+    <!-- Loading GIF -->
+    <div id="loading-gif">
+      <img src="{{ url_for('static', filename='luffy_running.gif') }}" alt="Loading..." />
+      <p>Generating your awesome story...</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('mobileSidebar');
+      sidebar.classList.toggle('show');
+    }
+
+    function showGif() {
+      document.querySelector('form').style.display = 'none';
+      document.getElementById('loading-gif').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

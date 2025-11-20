@@ -1,0 +1,376 @@
+<!--
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Story History</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .story-entry {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .story-entry p {
+            margin: 10px 0;
+        }
+
+        .story-entry form {
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .story-entry button {
+            padding: 8px 12px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .story-entry .listen-btn {
+            background-color: #4CAF50;
+        }
+
+        .story-entry .delete-btn {
+            background-color: #f44336;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Story History</h1>
+
+    {% for story in stories %}
+    <div class="story-entry">
+        <p><strong>Genre:</strong> {{ story['genre'].capitalize() }}</p>
+        <p><strong>Generated:</strong> {{ story['timestamp'] }}</p>
+        <p>{{ story['story'] }}</p>
+
+        <form action="/listen_story" method="post">
+            <input type="hidden" name="story_id" value="{{ story['_id'] }}">
+            <button type="submit" class="listen-btn">🔊 Listen</button>
+        </form>
+
+        <form action="/delete_story" method="post">
+            <input type="hidden" name="story_id" value="{{ story['_id'] }}">
+            <button type="submit" class="delete-btn" onclick="return confirm('Delete this story?')">🗑️ Delete</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    <a href="/" class="back-link">⬅ Back to Home</a>
+</body>
+</html>
+-->
+
+<!--
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Story History</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .story-entry {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .story-entry p {
+            margin: 10px 0;
+        }
+
+        .button-group {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .story-entry button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .listen-btn {
+            background-color: #4CAF50;
+        }
+
+        .pause-btn {
+            background-color: #ff9800;
+        }
+
+        .resume-btn {
+            background-color: #2196F3;
+        }
+
+        .stop-btn {
+            background-color: #f44336;
+        }
+
+        .delete-btn {
+            background-color: #9c27b0;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Disabled button style */
+        button:disabled {
+            background-color: #888 !important;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Story History</h1>
+
+    {% for story in stories %}
+    <div class="story-entry" data-story-id="{{ story['_id'] }}">
+        <p><strong>Genre:</strong> {{ story['genre'].capitalize() }}</p>
+        <p><strong>Generated:</strong> {{ story['timestamp'] }}</p>
+        <p class="story-text">{{ story['story'] }}</p>
+
+        <div class="button-group">
+            <button class="listen-btn" onclick="playTTS(this)">🔊 Listen</button>
+            <button class="pause-btn" onclick="pauseTTS()" disabled>⏸ Pause</button>
+            <button class="resume-btn" onclick="resumeTTS()" disabled>▶️ Resume</button>
+            <button class="stop-btn" onclick="stopTTS()" disabled>⏹ Stop</button>
+
+            <form action="/delete_story" method="post" style="margin-left: auto;">
+                <input type="hidden" name="story_id" value="{{ story['_id'] }}">
+                <button type="submit" class="delete-btn" onclick="return confirm('Delete this story?')">🗑️ Delete</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    <a href="/" class="back-link">⬅ Back to Home</a>
+
+    <script>
+      let synth = window.speechSynthesis;
+      let utterance;
+      let currentButtonGroup = null;
+
+      function playTTS(button) {
+        if (synth.speaking) {
+          alert("Already speaking. Please stop first.");
+          return;
+        }
+
+        const storyEntry = button.closest('.story-entry');
+        const storyText = storyEntry.querySelector('.story-text').innerText;
+        currentButtonGroup = storyEntry.querySelector('.button-group');
+
+        utterance = new SpeechSynthesisUtterance(storyText);
+        synth.speak(utterance);
+
+        updateButtons(true, false, true, true);
+
+        utterance.onend = () => {
+          updateButtons(false, false, false, false);
+        };
+      }
+
+      function pauseTTS() {
+        if (synth.speaking && !synth.paused) {
+          synth.pause();
+          updateButtons(false, true, true, true);
+        }
+      }
+
+      function resumeTTS() {
+        if (synth.paused) {
+          synth.resume();
+          updateButtons(true, false, true, true);
+        }
+      }
+
+      function stopTTS() {
+        if (synth.speaking) {
+          synth.cancel();
+          updateButtons(false, false, false, false);
+        }
+      }
+
+      function updateButtons(listenEnabled, pauseEnabled, resumeEnabled, stopEnabled) {
+        if (!currentButtonGroup) return;
+
+        const listenBtn = currentButtonGroup.querySelector('.listen-btn');
+        const pauseBtn = currentButtonGroup.querySelector('.pause-btn');
+        const resumeBtn = currentButtonGroup.querySelector('.resume-btn');
+        const stopBtn = currentButtonGroup.querySelector('.stop-btn');
+
+        listenBtn.disabled = !listenEnabled;
+        pauseBtn.disabled = !pauseEnabled;
+        resumeBtn.disabled = !resumeEnabled;
+        stopBtn.disabled = !stopEnabled;
+      }
+    </script>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Story History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+
+    <style>
+        .delete-btn {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #c62828;
+        }
+
+        .listen-btn,
+        .stop-btn {
+            background-color: #43a047;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .listen-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .stop-btn:hover {
+            background-color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='logo.gif') }}" alt="Logo" class="logo" />
+        <span class="nav-title">AI Story Generator</span>
+    </div>
+    <div class="nav-right">
+        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('history') }}" class="nav-link">History</a>
+    </div>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div class="mobile-sidebar" id="mobileSidebar">
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('history') }}">History</a>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <h1>Story History</h1>
+
+    {% for story in stories %}
+    <div class="story-entry">
+        <p><strong>Prompt:</strong> {{ story.prompt }}</p>
+        <p><strong>Generated Story:</strong> {{ story.story }}</p>
+
+        <div class="button-group">
+            <button class="listen-btn" onclick="speakStory(`{{ story.story | escape }}`)">🎧 Listen</button>
+            <button class="stop-btn" onclick="stopSpeech()">⏹ Stop</button>
+
+            <form action="{{ url_for('delete_story') }}" method="POST" style="display:inline;" onsubmit="stopSpeech(); return confirm('Are you sure you want to delete this story?');">
+                <input type="hidden" name="story_id" value="{{ story._id }}">
+                <button type="submit" class="delete-btn">🗑️ Delete</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="link-section">
+        <a href="/" class="back-link">← Generate New Story</a>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function toggleSidebar() {
+        document.getElementById('mobileSidebar').classList.toggle('show');
+    }
+
+    let synth = window.speechSynthesis;
+
+    function speakStory(text) {
+        if (synth.speaking) {
+            synth.cancel();
+        }
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        synth.speak(utterance);
+    }
+
+    function stopSpeech() {
+        if (synth.speaking) {
+            synth.cancel();
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Error | AI Story Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="{{ url_for('static', filename='logo.gif') }}" alt="Logo" class="logo" />
+    <span class="nav-title">AI Story Generator</span>
+  </div>
+  <div class="nav-right">
+    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+    <a href="{{ url_for('history') }}" class="nav-link">History</a>
+  </div>
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div class="mobile-sidebar" id="mobileSidebar">
+  <a href="{{ url_for('index') }}">Home</a>
+  <a href="{{ url_for('history') }}">History</a>
+</div>
+
+<!-- Main Error Content -->
+<div class="container">
+  <h1>🚨 Oops! Something went wrong.</h1>
+  <p>We encountered an error while processing your request. Please try again later or return to the homepage.</p>
+
+  <div class="link-section">
+    <a href="{{ url_for('index') }}" class="back-link">← Back to Home</a>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  function toggleSidebar() {
+    document.getElementById('mobileSidebar').classList.toggle('show');
+  }
+</script>
+
+</body>
+</html>
