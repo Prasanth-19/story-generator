@@ -1,6 +1,9 @@
 myenv/
 venv/
 env/
+myenv/
+*.dll
+*.lib
 models/
 __pycache__/
 *.dll
