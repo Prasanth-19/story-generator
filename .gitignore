@@ -1,21 +1,14 @@
-# Virtual Environments
 myenv/
 venv/
 env/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Local models
 models/
-
-# Environment variables
+__pycache__/
+*.dll
+*.lib
+*.pyd
+*.so
+*.bin
+*.zip
+*.tar
+*.pt
 .env
-
-# VSCode files
-.vscode/
-
-# OS files
-Thumbs.db
-.DS_Store
