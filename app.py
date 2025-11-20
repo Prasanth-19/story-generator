@@ -3,6 +3,7 @@ from gencode import generate_story
 from db import save_story, get_all_stories, collection
 from bson import ObjectId
 import random
+import os
 
 app = Flask(__name__)
 
@@ -95,4 +96,5 @@ def internal_error(e):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
